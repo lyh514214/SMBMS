@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ahao.mapper.user.UserMapper">
+
+    <select id="getLoginUser" resultType="User" parameterType="string">
+        select * from smbms_user where userCode=#{userCode}
+    </select>
+
+    <insert id="insertNewUser" parameterType="User">
+        insert into smbms_user (userCode,userName,userPassword,gender,birthday,phone,address,userRole,createdBy,creationDate)
+        values (#{userCode},#{userName},#{userPassword},#{gender},#{birthday},#{phone},#{address},#{userRole},#{createdBy},#{creationDate})
+    </insert>
+
+    <select id="queryTheUser" resultType="User" parameterType="string">
+        select * from smbms_user where id=#{id}
+    </select>
+
+    <delete id="deleteById" parameterType="string">
+        delete from smbms_user where id=#{id}
+    </delete>
+
+    <select id="getTotalCount" resultType="Integer">
+        select count(1) from smbms_user u ,smbms_role r where u.userRole = r.id
+        <if test="userName !=null and userName != ''">
+            and u.userName like concat('%',#{userName},'%')
+        </if>
+        <if test="userRole != 0">
+            and u.userRole = #{userRole}
+        </if>
+    </select>
+
+    <select id="queryUsersByPage" resultType="User">
+        select u.*,r.roleName userRoleName from smbms_user u ,smbms_role r where u.userRole = r.id
+        <if test="userName != null and userName != ''">
+            and u.userName like concat('%',#{userName},'%')
+        </if>
+        <if test="userRole != 0">
+            and u.userRole = #{userRole}
+        </if>
+        limit #{pageHeadIndex},#{pageSize}
+    </select>
+
+    <update id="pwdSave">
+        update smbms_user set userPassword=#{rnewpassword} where userPassword=#{oldpassword}
+    </update>
+
+</mapper>
